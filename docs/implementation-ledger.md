@@ -46,3 +46,36 @@ Task 5: archive destination guard review found child name..nested bypassed a nai
 
 Task 5: complete onffeea8e. Final full software47PASS31.010916s, actual-server4PASS19.328949s, zero failures/skips. No new runtime/fixture/protocol changes since successful smoke02 except the guarded archive path; both original smoke manifests retained.
 Task 6: canonical01 on cleanffeea8e passed11/11 in64.941s including owned cleanup. Seven effects7000cents, eight durable receiver outcomes,33 activity attempts,8POST/5GET. Original11/compatible11 replay pass; incompatibleA1 expected DeterminismViolationError. WorkerKILL137/OOMfalse at354ms/newPID/start, TemporalPID/start unchanged. Network-disabled read-only verifier PASS and Git source-bundle verification PASS. Final fresh review/integration pending; no public/paid/cloud/provider action.
+
+
+Final review: one fresh whole-branch review, base6adc39f/reviewed4ed9cc9; 0Critical,
+2Important, 1Minor. Both Important grades stand by user effect, fixed in one pass.
+Final: fixed inspection query/closure race: three inspection regressions RED3 ->
+GREEN3 using real server handles/results with controlled edge failure; bounded
+re-description recovers completed/closed state or preserves the still-running error.
+Final: fixed missing Temporal process identity enforcement: three new evidence
+regressions RED3 -> GREEN16 verifier tests, requiring valid matching PID/start fields.
+Final: fixed both findings, suite53/53 in37.53511773s plus actual-server4/4
+in18.526349351s on0c5ca3a; no failures/skips. Original canonical and archive both pass
+the corrected verifier read-only/network-disabled. Workflow/fixture hashes unchanged;
+no measured runtime rerun and no re-review. Raw logs and immutable receipts retained.
+Final: minor (deferred): lost finalization acknowledgements can return
+reconciliation_required with stale held reservation although SQL is consumed;
+non-success remains correct, but an investigator can misread the disposition.
+Final: Ruling: production authentication and adversarial direct SDK/privilege access
+remain outside trusted local fixtures; this bounded user receives only local identity
+checks. Cost if wrong: no production authorization assurance.
+Final: Ruling: real payment/compliance/distributed exactly-once remain outside the
+synthetic receiver study. Cost if wrong: no financial correctness assurance.
+Final: Ruling: HA, server/storage loss, throughput and rolling deployments remain
+outside one worker-interruption observation. Cost if wrong: no operational/scaling assurance.
+Final: Ruling: operator resend/resolution remains outside the fixed scenarios;
+uncertain results stay unresolved. Cost if wrong: manual investigation cannot resolve them in-app.
+Final: Ruling: external attestation/malicious fabrication remains outside honest local
+hash preservation. Cost if wrong: evidence consistency can be mistaken for external truth.
+Final: Ruling: public publishing/hosted CI/cloud remain outside approved local work.
+Cost if wrong: no deployed-service or hosted CI proof.
+Task 6: capture, review/correction and preservation verified; integration pending.
+Outside-worktree checkpoint preserves214 files/146331276bytes and eight stopped
+volume exports/26916064bytes. Original volumes and evidence remain retained.
+Supplemental review evidence/source/scratch records are hash-verified separately.

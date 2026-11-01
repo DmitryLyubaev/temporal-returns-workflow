@@ -55,8 +55,10 @@ The canonical local capture passed **11/11** predeclared scenarios in **64.941s*
 including startup/replay/cleanup: seven synthetic effects, 33 activity attempts,
 eight receiver POSTs and five receipt lookups. All eleven histories replayed on
 original and compatible code; incompatible code failed as expected. Software checks
-passed47 tests plus a separate four-case actual-server profile. Final review and
-local integration remain pending. See the [dated results](docs/local-results.md). Time-skipping software tests are distinct from actual development-server
+passed 53 tests plus a separate four-case actual-server profile after the one
+review correction pass. Local integration remains pending. One deferred minor can
+report a stale reservation disposition after a lost finalization acknowledgement;
+see [review closeout](docs/review-closeout.md). See the [dated results](docs/local-results.md). Time-skipping software tests are distinct from actual development-server
 checks. Native activity cancellations/timeouts can produce upstream late-completion
 warnings; those raw logs are retained rather than hidden.
 

@@ -111,7 +111,7 @@ canonical study. A final archive-child-path guard regression was fixed before
 canonical01; compiled workflow and fixture hashes remained identical. Both original
 smoke bundles are hash-archived. No old failed evidence was rewritten or relabelled.
 
-## Limits and remaining closeout
+## Review corrections and closeout
 
 One sample per synthetic scenario, one worker interruption and three controlled replay
 bundles. There is no real payment, customer data, human approval study, LLM evaluation,
@@ -119,8 +119,19 @@ cloud deployment, hosted CI, production authentication, HA, SLA, financial compl
 or distributed exactly-once claim. Uncertain refunds have no operator resend/resolution
 feature. Reviewer identity is a local fixture.
 
-The one fresh whole-branch review and owner-selected local integration are pending.
-Public publication is a separate decision.
+One fresh whole-branch review reported zero Critical, two Important and one Minor
+findings. Both Important findings were fixed in one RED/GREEN pass on `0c5ca3a`:
+inspection now recovers from a query/closure race, and worker-only recovery evidence
+requires matching valid Temporal PID/start fields. The fresh full software check
+passed **53 tests** in 37.53511773 seconds plus the separate **four-case** actual-server
+profile in 18.526349351 seconds, zero failures/skips. The stricter read-only verifier
+passed against original canonical01 and its archive. Workflow/fixture hashes are
+unchanged; no canonical rerun or second review occurred.
+
+One Minor is deferred: a committed finalization with lost acknowledgements can leave
+`reconciliation_required` reporting a stale `held` reservation although SQL shows
+consumed. This can confuse investigation. See [review closeout](review-closeout.md).
+Owner-selected local integration remains pending. Public publication is separate.
 
 ## Identities
 
