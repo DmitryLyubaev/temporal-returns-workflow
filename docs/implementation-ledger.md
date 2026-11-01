@@ -79,3 +79,17 @@ Task 6: capture, review/correction and preservation verified; integration pendin
 Outside-worktree checkpoint preserves214 files/146331276bytes and eight stopped
 volume exports/26916064bytes. Original volumes and evidence remain retained.
 Supplemental review evidence/source/scratch records are hash-verified separately.
+
+
+Local integration, 2 November 2026: owner chose option1. Main fast-forwarded
+6adc39f..9f18cea, no app remote/push/pull. Fresh primary scripts/local.ps1 check:
+53PASS42.417211872s plus actual-server4PASS17.92562239s, zero failures/skips.
+Current verifier passed original canonical01 and archive, read-only/network-disabled.
+Both immutable manifests and source bundle verified; compiled workflow/fixture
+still match canonical source. No measured runtime or replay execution repeated.
+266 ignored evidence/build files (152165393bytes) and private environment were
+copied/hash-verified into primary before cleanup. Immutable software log/receipt
+and integration verifier/down outputs remain ignored; supplemental source/evidence
+is preserved outside the worktree. Owned services stopped, original data volumes
+and unrelated resources retained. Task6 local closeout complete with owner-approved
+retirement of only the merged owned worktree and branch; no force removal.

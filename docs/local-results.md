@@ -131,7 +131,14 @@ unchanged; no canonical rerun or second review occurred.
 One Minor is deferred: a committed finalization with lost acknowledgements can leave
 `reconciliation_required` reporting a stale `held` reservation although SQL shows
 consumed. This can confuse investigation. See [review closeout](review-closeout.md).
-Owner-selected local integration remains pending. Public publication is separate.
+The owner selected local merge on 2 November 2026. Main fast-forwarded to `9f18cea`.
+Fresh primary software verification passed **53 tests** in 42.417211872 seconds,
+plus the separate **four-case** actual-server profile in 17.92562239 seconds, zero
+failures/skips. Both retained canonical copies passed the current read-only,
+network-disabled verifier. Workflow/fixture hashes remain identical; no measured
+runtime was repeated. Private evidence/credentials were relocated with verified
+hashes before owned worktree retirement. All owned services stopped; volumes,
+shared caches/images and unrelated resources are retained. Public publication is separate.
 
 ## Identities
 

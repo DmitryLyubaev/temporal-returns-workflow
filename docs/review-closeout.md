@@ -57,6 +57,13 @@ It includes eight stopped data-volume exports, with originals retained; no resto
 was claimed. A supplemental checkpoint preserves review corrections and scratch
 review records. Credentials and raw captures remain ignored.
 
-The feature branch is `codex/p28-local`; primary main remains initialization
-`6adc39f`. Local integration is awaiting the owner's choice. Public source,
-cloud hosting and CI remain separate decisions.
+The owner selected local merge on 2 November 2026. Main fast-forwarded from
+`6adc39f` to `9f18cea`. Fresh primary verification passed 53 software cases in
+42.417211872 seconds plus the four-case actual-server profile in 17.92562239 seconds,
+zero failures/skips. Current read-only/network-disabled evidence verification passed
+for both canonical copies, without repeating runtime or replay execution.
+Private evidence/credentials were copied into the primary checkout with verified
+hashes. New integration logs and source are preserved in a separate supplemental
+checkpoint before retirement of the merged owned worktree/branch. Owned services
+are stopped; volumes, shared images/caches and unrelated resources are retained.
+Public source, cloud hosting and CI remain separate decisions.

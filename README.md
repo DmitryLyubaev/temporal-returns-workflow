@@ -56,7 +56,9 @@ including startup/replay/cleanup: seven synthetic effects, 33 activity attempts,
 eight receiver POSTs and five receipt lookups. All eleven histories replayed on
 original and compatible code; incompatible code failed as expected. Software checks
 passed 53 tests plus a separate four-case actual-server profile after the one
-review correction pass. Local integration remains pending. One deferred minor can
+review correction pass. Local integration completed on 2 November 2026; fresh
+primary checks passed 53 software cases and the separate four-case profile. One
+deferred minor can
 report a stale reservation disposition after a lost finalization acknowledgement;
 see [review closeout](docs/review-closeout.md). See the [dated results](docs/local-results.md). Time-skipping software tests are distinct from actual development-server
 checks. Native activity cancellations/timeouts can produce upstream late-completion
