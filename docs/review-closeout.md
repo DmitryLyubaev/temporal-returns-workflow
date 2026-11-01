@@ -29,13 +29,25 @@ still match the canonical source `ffeea8e`. The runtime was not repeated.
 The reviewer also checked the retained capture/source bundle and ran twenty
 isolated evidence tests. These checks are separate from the measured runtime.
 
-## Deferred minor
+## Former deferred minor, resolved 2 November 2026
 
 If finalization commits but its acknowledgement is lost and all retries exhaust,
 the workflow can return `reconciliation_required` with reservation `held` although
 the database row is consumed. The non-success outcome is appropriate, but this is
 a stale last-confirmed disposition that can confuse an investigator. Operator
-resolution/resend is outside this demonstration. This minor was recorded, not fixed.
+resolution/resend remains outside this demonstration. It was initially deferred.
+
+The owner subsequently authorized the fix and publication. Finalization failure
+now sets the reservation disposition to `unconfirmed`; it does not infer SQL state
+from a missing acknowledgement. Both the pre-commit failure assertion and a real
+SQL consume-then-throw regression failed with held, then passed after the one-line
+correction. The regression confirms consumed SQL, three finalization attempts,
+one payment dispatch and one receiver effect. Fresh source `b68c355` passed 54
+software checks in41.773210564s and the five-case actual-server profile in24.079768503s,
+zero failures/skips. All eleven retained canonical histories replayed with the
+corrected workflow, using separate read-only evidence and supplemental output.
+One focused review of `7f65850..b68c355` found no Critical/Important/Minor findings.
+The original canonical capture and its source identities were not changed.
 
 ## Boundaries accepted after review
 
@@ -66,4 +78,4 @@ Private evidence/credentials were copied into the primary checkout with verified
 hashes. New integration logs and source are preserved in a separate supplemental
 checkpoint before retirement of the merged owned worktree/branch. Owned services
 are stopped; volumes, shared images/caches and unrelated resources are retained.
-Public source, cloud hosting and CI remain separate decisions.
+Public source and hosted CI were authorized by the owner on 2 November 2026; actual publication/run results are recorded separately. Cloud deployment remains outside scope.

@@ -55,12 +55,12 @@ The canonical local capture passed **11/11** predeclared scenarios in **64.941s*
 including startup/replay/cleanup: seven synthetic effects, 33 activity attempts,
 eight receiver POSTs and five receipt lookups. All eleven histories replayed on
 original and compatible code; incompatible code failed as expected. Software checks
-passed 53 tests plus a separate four-case actual-server profile after the one
-review correction pass. Local integration completed on 2 November 2026; fresh
-primary checks passed 53 software cases and the separate four-case profile. One
-deferred minor can
-report a stale reservation disposition after a lost finalization acknowledgement;
-see [review closeout](docs/review-closeout.md). See the [dated results](docs/local-results.md). Time-skipping software tests are distinct from actual development-server
+passed 54 tests plus a separate five-case actual-server profile after the authorized
+finalization follow-up on 2 November 2026. A lost finalization acknowledgement now
+reports an unconfirmed reservation disposition, preserving the known payment and
+requiring reconciliation. The corrected workflow also replayed all eleven retained
+histories. See [review closeout](docs/review-closeout.md) and the
+[dated results](docs/local-results.md). Time-skipping software tests are distinct from actual development-server
 checks. Native activity cancellations/timeouts can produce upstream late-completion
 warnings; those raw logs are retained rather than hidden.
 
@@ -75,3 +75,13 @@ Raw captures, credentials and histories stay ignored. `down` stops only the owne
 Compose project and retains volumes. Public publication and hosted CI are separate
 decisions. See the [design](docs/superpowers/specs/2026-11-01-temporal-returns-workflow-design.md)
 and [implementation ledger](docs/implementation-ledger.md).
+
+
+## Hosted checks
+
+[Software checks](https://github.com/DmitryLyubaev/temporal-returns-workflow/actions/workflows/checks.yml)
+run the software suite and separate actual-server profile on pushes to main and
+pull requests. The workflow uses GitHub-hosted Ubuntu and pinned Docker dependencies,
+with read-only repository permissions and no deployment. Raw private captures and
+local credentials are excluded. Canonical recovery and replay evidence above was
+measured locally; CI does not rerun the canonical capture.

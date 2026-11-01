@@ -13,16 +13,16 @@ Keep all existing evidence unchanged, and retain its original source identity. P
 
 ## Task 1: Correct finalization disposition
 
-- [ ] Extend the known-payment finalization-failure assertion to unconfirmed.
-- [ ] Add an integration regression that executes real consume SQL then throws for every acknowledgement, expecting reconciliation_required/unconfirmed, consumed SQL, one effect, three finalization attempts and one dispatch.
-- [ ] Observe both regressions fail before changing production code.
-- [ ] Set reservation unconfirmed in the finalization catch; run focused checks and full software/actual-server profiles.
-- [ ] Replay eleven retained canonical histories using current workflow code, writing a separate supplemental result without modifying original evidence.
+- [x] Extend the known-payment finalization-failure assertion to unconfirmed.
+- [x] Add an integration regression that executes real consume SQL then throws for every acknowledgement, expecting reconciliation_required/unconfirmed, consumed SQL, one effect, three finalization attempts and one dispatch.
+- [x] Observe both regressions fail before changing production code.
+- [x] Set reservation unconfirmed in the finalization catch; run focused checks and full software/actual-server profiles.
+- [x] Replay eleven retained canonical histories using current workflow code, writing a separate supplemental result without modifying original evidence.
 
 ## Task 2: Publish with hosted checks
 
-- [ ] Add a SHA-pinned checkout and hosted Ubuntu workflow running pinned dependency setup, software and actual-server profiles, with always-run owned cleanup.
-- [ ] Inspect the small change and CI prerequisites, update source documentation and commit under the personal identity.
+- [x] Add a SHA-pinned checkout and hosted Ubuntu workflow running pinned dependency setup, software and actual-server profiles, with always-run owned cleanup.
+- [x] Inspect the small change and CI prerequisites, update source documentation and commit under the personal identity.
 - [ ] Merge locally, preserve supplemental logs/source and retire only the owned worktree after verification.
 - [ ] Create the personal public GitHub repository, push main, observe CI and correct actual failures if any.
 - [ ] Update tracker/handover with public URL and actual CI result. Public deployment is outside scope.

@@ -93,3 +93,23 @@ and integration verifier/down outputs remain ignored; supplemental source/eviden
 is preserved outside the worktree. Owned services stopped, original data volumes
 and unrelated resources retained. Task6 local closeout complete with owner-approved
 retirement of only the merged owned worktree and branch; no force removal.
+
+
+Authorized follow-up, 2 November 2026: user said proceed with fixing the former
+minor and public repository/CI. Reused the previously approved ignored Git worktree
+fallback at.worktrees/publication, branchcodex/p28-publish, because source folder
+remains outside app registration. Existing clean main7f65850 had fresh53+4 baseline.
+Two finalization regressions RED2held-vs-unconfirmed then GREEN2. b68c355 changes
+only the finalization catch disposition; no new activity/SQL read/retry/dispatch.
+Full54PASS41.773210564s,actual5PASS24.079768503s,zero failures/skips. New realSQL
+consume-then-lost-ACK test verifies three attempts/one effect/one dispatch and SQL
+consumed. Current compiled workflow replays original11 histories read-only/network-
+disabled; separate supplemental report, no canonical capture rewrite/repeat.
+One focused review of7f65850..b68c355 found0Critical/0Important/0Minor. Reviewer set
+execution outcomes aside: parent verified54+5 and11replays; hosted run remains to
+be observed. Original canonical correctness retains its prior verification and
+hashes; whole-project architecture remains outside this delta review. Targeted
+tracked-history scan of94 blobs found no exactlocalcredential/privategeneratedpath
+or credentialpattern; personal author identity verified. This is targeted inspection,
+not a certification against arbitrary encoded secrets. Publication documentation
+is completed from actual outcomes, not anticipated results.

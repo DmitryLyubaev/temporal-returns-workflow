@@ -148,3 +148,20 @@ shared caches/images and unrelated resources are retained. Public publication is
 - Original workflow bundle SHA-256: `524dc17e3f8f45ba4c034ae7fba61b909811e741553fb1bba4347195f0adb876`
 - Equal SQL snapshots SHA-256: `327f44261901cb2ed3f149d5246ccdeff19ea5e107bf64db0587e09d88bf0ab2`
 - Source bundle SHA-256: `42a1bdce76d42eb9843c723ca8554fbf9495cb728dc6c18ceec11f6528d4db84`
+
+
+## Authorized finalization follow-up, 2 November 2026
+
+The former minor was fixed on `b68c355`: failed finalization acknowledgement reports
+reservation `unconfirmed`, with known committed payment and reconciliation required.
+Two focused regressions were observed RED then GREEN; real SQL commit-then-throw
+preserves consumed SQL, one effect/dispatch and three finalization attempts.
+Full software **54PASS/0fail/0skip**,41.773210564s; separate actual-server
+profile **5PASS/0fail/0skip**,24.079768503s. The corrected workflow replayed all eleven
+retained histories successfully in a network-disabled/read-only process, with a
+separate report and per-history hashes. Workflow SHA-256 is now
+`4402cad47f35e5137729bd2d592f564d86915051f8b44396efa72d1094c1e87d`.
+These are additional software/replay checks, not a new eleven-case runtime capture.
+Original canonical01 bytes and its original source/hash identities above remain
+unchanged. One focused follow-up review found no findings. Publication and hosted
+run outcomes are recorded after actual execution.
