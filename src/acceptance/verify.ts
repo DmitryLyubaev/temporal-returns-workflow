@@ -65,6 +65,8 @@ export async function verifyCapture(dir:string):Promise<VerificationResult>{
   must(report.workflowBundleHash===replay.bundleHashes.original,'original_bundle_mismatch');
   const k=report.kill;must(JSON.stringify(k)===JSON.stringify(await json(dir,'kill.json')),'kill_proof_mismatch');
   must(k?.exitCode===137&&k.oomKilled===false&&k.beforeCompletion===true&&k.elapsedMs>=0&&k.elapsedMs<1000&&k.oldPid!==k.newPid&&k.oldStartedAt!==k.newStartedAt&&k.temporalIdBefore===k.temporalIdAfter,'worker_kill_boundary');
+  const validStart=(v:unknown)=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(v)&&Number.isFinite(Date.parse(v));
+  must(Number.isSafeInteger(k.temporalPidBefore)&&k.temporalPidBefore>0&&Number.isSafeInteger(k.temporalPidAfter)&&k.temporalPidAfter>0&&validStart(k.temporalStartedBefore)&&validStart(k.temporalStartedAfter)&&k.temporalPidBefore===k.temporalPidAfter&&k.temporalStartedBefore===k.temporalStartedAfter,'temporal_process_boundary');
   return {pass:true,failures:[]};
  }catch(e){return {pass:false,failures:[(e as Error).message]};}
 }
