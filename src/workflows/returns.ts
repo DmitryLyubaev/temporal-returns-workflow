@@ -36,7 +36,7 @@ export async function returnsWorkflow(request:RefundRequest):Promise<ReturnResul
    }
    if(receiver.status==='rejected')return compensate('failed_compensated');
    stage='finalizing';try{await a.finalizeRefund(request,receiver);reservation='consumed';stage='refunded';return finish('refunded');}
-   catch{stage='reconciliation_required';return finish('reconciliation_required');}
+   catch{reservation='unconfirmed';stage='reconciliation_required';return finish('reconciliation_required');}
   });
  }catch(e){if(isCancellation(e)||root.consideredCancelled){cancellationRequested=true;return compensate('cancelled');}return compensate('failed_compensated');}
 }

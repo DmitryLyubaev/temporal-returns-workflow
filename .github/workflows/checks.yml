@@ -1,0 +1,49 @@
+name: Software checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      COMPOSE_PROJECT_NAME: p28-ci
+      P28_TASK_QUEUE: p28-ci
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Prepare local test dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          printf 'P28_PASSWORD=%s\n' "$(openssl rand -hex 16)" > .env
+          mkdir -p .local/tools
+          curl --fail --location --retry 2 --max-time 120 \
+            https://github.com/temporalio/sdk-java/releases/download/v1.40.0/temporal-test-server_1.40.0_linux_amd64.tar.gz \
+            --output .local/tools/testserver.tar.gz
+          echo '524465a96274831e004326f6e2f2a5f3ef9aaed72c2069cf16c1d64b8b1ec3ca  .local/tools/testserver.tar.gz' | sha256sum --check -
+          tar -xzf .local/tools/testserver.tar.gz -C .local/tools
+          docker compose up -d --wait postgres
+          docker compose up -d temporal
+          docker compose run --rm tools npm ci --no-audit --no-fund
+          timeout 45s bash -c 'until docker compose exec -T temporal temporal --address 127.0.0.1:7233 --namespace p28 operator namespace describe >/dev/null 2>&1; do sleep 1; done'
+      - name: Software suite
+        run: docker compose run --rm tools npm test
+      - name: Actual-server profile
+        run: docker compose run --rm -e P28_REAL=1 tools node --test --test-concurrency=1 build/tests/cancellation.test.js
+      - name: Stop owned services
+        if: always()
+        run: docker compose down --timeout 3

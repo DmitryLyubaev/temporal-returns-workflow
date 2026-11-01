@@ -44,7 +44,7 @@ test('cleanup_failure_not_cancelled',async()=>{
 });
 test('committed_finalize_failure_is_known_payment',async()=>{
  const result=await run({finalizeRefund:async()=>{throw Error('db unavailable');}});
- assert.equal(result.outcome,'reconciliation_required');assert.equal(result.receiver?.status,'committed');
+ assert.equal(result.outcome,'reconciliation_required');assert.equal(result.receiver?.status,'committed');assert.equal(result.reservation,'unconfirmed');
 });
 test('permanent activity failure does not exhaust three attempts',async()=>{
  let attempts=0;

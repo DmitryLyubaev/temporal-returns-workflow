@@ -4,8 +4,8 @@ import {Worker,Runtime,DefaultLogger} from '@temporalio/worker';
 import {TestWorkflowEnvironment} from '@temporalio/testing';
 import {openPool} from '../src/db/pool';
 import {migrate} from '../src/db/migrate';
-import {makeRequest,ReturnResult,RefundRequest} from '../src/contracts';
-import {seed} from '../src/db/reservations';
+import {makeRequest,ReturnResult,RefundRequest,Receipt} from '../src/contracts';
+import {seed,consume} from '../src/db/reservations';
 import {startReceiver} from '../src/receiver/server';
 import {createActivities} from '../src/activities';
 Runtime.install({logger:new DefaultLogger('ERROR')});
@@ -53,4 +53,18 @@ test('activity start-to-close timeout reconciles without scheduling another disp
  let dispatch=0;
  const result=await run('',approve,{dispatchPayment:async()=>{dispatch++;await new Promise(resolve=>setTimeout(resolve,7000));throw Error('late dispatch failure');}});
  assert.equal(result.outcome,'uncertain');assert.equal(result.reservation,'held');assert.equal(dispatch,1);
+});
+
+
+test('lost finalization acknowledgements leave disposition unconfirmed after SQL consumes',async()=>{
+ let attempts=0;
+ const result=await run('',approve,{finalizeRefund:async(r:RefundRequest,receipt:Receipt)=>{
+  attempts++;await consume(workerPool,r,receipt);throw Error('finalization_acknowledgement_lost');
+ }});
+ const key=result.request.refundKey;
+ assert.equal(result.outcome,'reconciliation_required');assert.equal(result.receiver?.status,'committed');
+ assert.equal(result.reservation,'unconfirmed');assert.equal(attempts,3);
+ assert.equal((await pool.query('SELECT state FROM reservations WHERE refund_key=$1',[key])).rows[0].state,'consumed');
+ assert.equal((await pool.query('SELECT * FROM receiver_effects WHERE refund_key=$1',[key])).rowCount,1);
+ assert.equal((await pool.query("SELECT * FROM activity_attempts WHERE refund_key=$1 AND activity='dispatchPayment'",[key])).rowCount,1);
 });
