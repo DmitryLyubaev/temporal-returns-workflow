@@ -1,4 +1,11 @@
 services:
+  temporal:
+    image: temporalio/temporal:1.9.1@sha256:150d6208d7b24371e4080f49780e6061611f6279cd6908236e9a34ae5746c1b5
+    platform: linux/amd64
+    command: ["server", "start-dev", "--ip", "0.0.0.0", "--port", "7233", "--ui-port", "8233", "--db-filename", "/home/temporal/temporal.db", "--namespace", "p28"]
+    ports: ["127.0.0.1:7288:7233", "127.0.0.1:8288:8233"]
+    volumes: ["temporal:/home/temporal"]
+    mem_limit: 1536m
   postgres:
     image: postgres:17.9-bookworm@sha256:3a69b9de644363f30110fbaa78b9e3298ce71bb1aa9124c0b0ceb0a2602c3283
     platform: linux/amd64
@@ -20,9 +27,37 @@ services:
     working_dir: /app
     environment:
       DATABASE_URL: postgresql://p28_owner:${P28_PASSWORD}@postgres:5432/p28
+      TEMPORAL_ADDRESS: temporal:7233
+      TASK_QUEUE: ${P28_TASK_QUEUE:-p28-dev}
     volumes: [".:/app", "modules:/app/node_modules"]
     mem_limit: 1536m
     profiles: ["tools"]
+  receiver:
+    build:
+      context: .
+      args:
+        SOURCE_SHA: ${P28_SOURCE_SHA:-uncommitted}
+    image: p28-app:${P28_SOURCE_TAG:-dev}
+    platform: linux/amd64
+    user: node
+    command: ["node", "build/src/receiver/server.js"]
+    environment:
+      DATABASE_URL: postgresql://p28_owner:${P28_PASSWORD}@postgres:5432/p28
+    ports: ["127.0.0.1:8388:8080"]
+    mem_limit: 256m
+  worker:
+    image: p28-app:${P28_SOURCE_TAG:-dev}
+    platform: linux/amd64
+    user: node
+    command: ["node", "build/src/worker.js"]
+    environment:
+      DATABASE_URL: postgresql://p28_owner:${P28_PASSWORD}@postgres:5432/p28
+      TEMPORAL_ADDRESS: temporal:7233
+      TASK_QUEUE: ${P28_TASK_QUEUE:-p28-dev}
+      RECEIVER_URL: http://receiver:8080
+    mem_limit: 768m
 volumes:
+  temporal:
   postgres:
   modules:
+    name: p28-local-node-modules

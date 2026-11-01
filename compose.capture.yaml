@@ -1,0 +1,13 @@
+services:
+  tools:
+    environment:
+      P28_PROJECT: ${P28_PROJECT:?capture project required}
+      P28_SOURCE_SHA: ${P28_SOURCE_SHA:?source required}
+      P28_CAPTURE_ID: ${P28_CAPTURE_ID:?capture required}
+      P28_DEADLINE: ${P28_DEADLINE:?deadline required}
+      P28_APP_IMAGE: p28-app:${P28_SOURCE_TAG:?source tag required}
+    volumes:
+      - .:/app:ro
+      - ./.local:/app/.local
+      - modules:/app/node_modules:ro
+      - /var/run/docker.sock:/var/run/docker.sock

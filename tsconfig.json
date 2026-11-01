@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "ES2022", "module": "Node16", "moduleResolution": "Node16",
     "rootDir": ".", "outDir": "build", "strict": true,
-    "esModuleInterop": true, "skipLibCheck": true, "types": ["node"]
+    "esModuleInterop": true, "skipLibCheck": true, "types": ["node"],
+    "rewriteRelativeImportExtensions": true
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"]
 }
