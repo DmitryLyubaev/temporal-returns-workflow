@@ -1,5 +1,5 @@
 import {readFile,writeFile,readdir,mkdir,copyFile,lstat} from 'node:fs/promises';
-import {join,relative,resolve,isAbsolute} from 'node:path';
+import {join,relative,resolve,isAbsolute,sep} from 'node:path';
 import {createHash} from 'node:crypto';
 import {constants} from 'node:fs';
 export type ArchiveManifest={version:number;files:{path:string;size:number;sha256:string}[]};
@@ -33,7 +33,7 @@ export async function checkManifest(dir:string):Promise<ArchiveManifest>{
 }
 export async function archiveCapture(dir:string,destination:string):Promise<ArchiveManifest>{
  const source=resolve(dir),target=resolve(destination),rel=relative(source,target);
- if(!rel||(!rel.startsWith('..')&&!isAbsolute(rel)))throw Error('archive_inside_capture');
+ if(!(rel==='..'||rel.startsWith('..'+sep)||isAbsolute(rel)))throw Error('archive_inside_capture');
  const manifest=await checkManifest(source);await mkdir(target,{recursive:false});
  for(const path of [...manifest.files.map(f=>f.path),'manifest.json']){
   const dst=join(target,path);await mkdir(join(dst,'..'),{recursive:true});await copyFile(join(source,path),dst,constants.COPYFILE_EXCL);

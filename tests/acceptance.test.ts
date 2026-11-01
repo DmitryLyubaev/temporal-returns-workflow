@@ -65,3 +65,4 @@ test('wrong image revision fails despite resealed evidence',async()=>{const d=aw
 test('worker compiled bytes must match replay tooling',async()=>{const d=await packet(),r=await get(d,'report.json');r.runtime.worker.workflowHash='0'.repeat(64);await put(d,'report.json',r);await seal(d);assert.equal((await verifyCapture(d)).pass,false);});
 test('bundle identity must match retained code',async()=>{const d=await packet(),r=await get(d,'replay.json');r.bundleHashes.compatible='0'.repeat(64);await put(d,'replay.json',r);await seal(d);assert.equal((await verifyCapture(d)).pass,false);});
 test('missing persisted kill proof cannot pass',async()=>{const d=await packet();await rm(join(d,'kill.json'));await seal(d);assert.equal((await verifyCapture(d)).pass,false);});
+test('archive destination cannot be a child whose name begins with dots',async()=>{const d=await packet();await assert.rejects(()=>archiveCapture(d,join(d,'..nested')));});
