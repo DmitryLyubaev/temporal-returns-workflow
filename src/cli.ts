@@ -7,6 +7,7 @@ import {makeRequest,parseReturn,parseDecision,PermanentError} from './contracts'
 import {seed} from './db/reservations';
 import {openPool} from './db/pool';
 import {inspectReturn} from './client';
+import {encodeHistory} from './acceptance/history';
 export type CliDependencies={client:Client;pool:Pool;write(value:unknown):void};
 export async function runCli(argv:string[],deps:CliDependencies):Promise<number>{
  try{
@@ -34,7 +35,7 @@ export async function runCli(argv:string[],deps:CliDependencies):Promise<number>
    const destination=resolve(v.output),root=resolve('.local'),rel=relative(root,destination);
    if(!rel||rel.startsWith('..')||isAbsolute(rel))throw new PermanentError('output_outside_evidence');
    const description=await h.describe(),history=await h.fetchHistory();
-   await mkdir(dirname(destination),{recursive:true});await writeFile(destination,JSON.stringify({workflowId:id,runId:description.runId,history}),{flag:'wx'});
+   await mkdir(dirname(destination),{recursive:true});await writeFile(destination,JSON.stringify({workflowId:id,runId:description.runId,history:encodeHistory(history)}),{flag:'wx'});
    deps.write({status:'exported',workflowId:id,runId:description.runId});return 0;
   }
   throw new PermanentError('invalid_command');

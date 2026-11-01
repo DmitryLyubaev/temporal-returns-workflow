@@ -50,6 +50,7 @@ async function packet(){
  await writeFile(join(dir,'runtime-workflow.js'),'generated software compiled fixture');await put(dir,'runtime-lock.json',{softwareFixture:true});
  const runtime={node:'v24.22.2',sdk:'1.25.0',workflowHash:sha(await readFile(join(dir,'runtime-workflow.js'))),lockHash:sha(await readFile(join(dir,'runtime-lock.json')))};
  await put(dir,'report.json',{version:1,captureId:capture,source,image:{revision:source,id:'sha256:'+'5'.repeat(64)},runtime:{worker:runtime,tools:runtime,postgresVersionNum:170009,temporalImage:'temporalio/temporal:1.9.1@sha256:150d6208d7b24371e4080f49780e6061611f6279cd6908236e9a34ae5746c1b5'},workflowBundleHash:hashes.original,fixtureHash:sha(await readFile('fixtures/acceptance.json')),sourceBundleHash:sha(bundle),cases,sqlBeforeHash:sha(await readFile(join(dir,'snapshots/before.json'))),sqlAfterHash:sha(await readFile(join(dir,'snapshots/after.json'))),kill:{containerId:'worker',exitCode:137,oomKilled:false,elapsedMs:100,oldPid:1,newPid:2,oldStartedAt:'old',newStartedAt:'new',temporalIdBefore:'server',temporalIdAfter:'server',beforeCompletion:true},cleanup:{servicesStopped:true},errors:[]});
+ await put(dir,'kill.json',(await get(dir,'report.json')).kill);
  await put(dir,'wrapper.json',{captureId:capture,source,durationMs:20000,withinDeadline:true,cleanup:true,error:null});await seal(dir);return dir;
 }
 test('valid generated software packet passes structural verifier only',async()=>{assert.equal((await verifyCapture(await packet())).pass,true);});
@@ -63,3 +64,4 @@ test('archive_hash_mismatch_fails',async()=>{const d=await packet();await writeF
 test('wrong image revision fails despite resealed evidence',async()=>{const d=await packet(),r=await get(d,'report.json');r.image.revision='0'.repeat(40);await put(d,'report.json',r);await seal(d);assert.equal((await verifyCapture(d)).pass,false);});
 test('worker compiled bytes must match replay tooling',async()=>{const d=await packet(),r=await get(d,'report.json');r.runtime.worker.workflowHash='0'.repeat(64);await put(d,'report.json',r);await seal(d);assert.equal((await verifyCapture(d)).pass,false);});
 test('bundle identity must match retained code',async()=>{const d=await packet(),r=await get(d,'replay.json');r.bundleHashes.compatible='0'.repeat(64);await put(d,'replay.json',r);await seal(d);assert.equal((await verifyCapture(d)).pass,false);});
+test('missing persisted kill proof cannot pass',async()=>{const d=await packet();await rm(join(d,'kill.json'));await seal(d);assert.equal((await verifyCapture(d)).pass,false);});

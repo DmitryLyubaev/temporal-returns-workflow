@@ -9,6 +9,8 @@ import {seed} from '../db/reservations';
 import {sha256} from './archive';
 import {DockerControl,dockerText,shouldStartCase} from './control';
 import {copyReplayBundles,replayCapture} from './replay';
+import {encodeHistory} from './history';
+import {finishResources} from './lifecycle';
 export type CaptureConfig={captureId:string;source:string;deadline:number;project:string;smoke:boolean};
 type CaseEvidence={id:string;status:'pass'|'error'|'unrun';workflowId:string;runId:string;result?:ReturnResult;durationMs:number;error?:string};
 export type CaptureReport={version:number;captureId:string;source:string;smoke:boolean;cases:CaseEvidence[];errors:string[];[key:string]:any};
@@ -24,6 +26,7 @@ export async function runAcceptance(config:CaptureConfig):Promise<CaptureReport>
  const fixtureBytes=await readFile('fixtures/acceptance.json'),fixture=JSON.parse(fixtureBytes.toString());
  const report:CaptureReport={version:1,captureId:config.captureId,source:config.source,smoke:config.smoke,fixtureHash:sha256(fixtureBytes),sourceBundleHash:sha256(await readFile(join(dir,'source.bundle'))),cases:fixture.cases.map((c:any)=>({id:c.id,status:'unrun',workflowId:`p28/${config.captureId}/${c.returnId}`,runId:'',durationMs:0})),errors:[],cleanup:{servicesStopped:false}};
  const admin=openPool(),reader=openPool('p28_reader'),docker=new DockerControl(config.project);
+ admin.on('error',e=>report.errors.push('admin_idle_connection:'+e.message));reader.on('error',e=>report.errors.push('reader_idle_connection:'+e.message));
  let connection:Connection|undefined,services:Record<string,string>|undefined;
  async function snapshot(){
   const c=await reader.connect();try{
@@ -97,11 +100,12 @@ export async function runAcceptance(config:CaptureConfig):Promise<CaptureReport>
       await docker.mutate(services!.worker,'start');const fresh=await docker.inspect(services!.worker);
       const serverAfter=await docker.inspect(services!.temporal);assert.equal(serverBefore.State.StartedAt,serverAfter.State.StartedAt);assert.equal(serverBefore.State.Pid,serverAfter.State.Pid);
       report.kill={containerId:services!.worker,exitCode:dead.State.ExitCode,oomKilled:dead.State.OOMKilled,elapsedMs,oldPid:old.State.Pid,newPid:fresh.State.Pid,oldStartedAt:old.State.StartedAt,newStartedAt:fresh.State.StartedAt,temporalIdBefore:serverBefore.Id,temporalIdAfter:serverAfter.Id,temporalStartedBefore:serverBefore.State.StartedAt,temporalStartedAfter:serverAfter.State.StartedAt,temporalPidBefore:serverBefore.State.Pid,temporalPidAfter:serverAfter.State.Pid,beforeCompletion:true};
+      await writeJson(dir,'kill.json',report.kill);
      }
      if(item.id==='A11'){await reached('payment_reached');await h.cancel();await admin.query('UPDATE fixture_control SET release_payment=true WHERE refund_key=$1',[request.refundKey]);}
     }
     evidence.result??=await h.result() as ReturnResult;
-    const history=await h.fetchHistory();await writeJson(dir,'histories/'+item.id+'.json',{workflowId:evidence.workflowId,runId:evidence.runId,history});
+    const history=await h.fetchHistory();await writeJson(dir,'histories/'+item.id+'.json',{workflowId:evidence.workflowId,runId:evidence.runId,history:encodeHistory(history)});
     assert.equal(evidence.result.outcome,item.outcome);assert.equal(evidence.result.reservation,item.reservation);evidence.status='pass';
    };
    let timer:NodeJS.Timeout|undefined;
@@ -118,15 +122,16 @@ export async function runAcceptance(config:CaptureConfig):Promise<CaptureReport>
   const after=await snapshot();await writeJson(dir,'snapshots/after.json',after);report.sqlAfterHash=sha256(await readFile(join(dir,'snapshots/after.json')));assert.equal(report.sqlBeforeHash,report.sqlAfterHash);
  }catch(e){report.errors.push((e as Error).message);}
  finally{
-  if(services){
+  await finishResources(async()=>{
+   const closed=await Promise.allSettled([connection?.close(),admin.end(),reader.end()]);
+   if(closed.some(r=>r.status==='rejected'))throw Error('capture_connection_close_failed');
+  },async()=>{if(services){
    for(const name of ['worker','receiver','temporal','postgres']){
     try{await writeFile(join(dir,'logs',name+'.log'),dockerText(await docker.logs(services[name])),{flag:'wx'});}catch(e){report.errors.push('log:'+name+':'+(e as Error).message);}
     try{await stopService(name);}catch(e){report.errors.push('cleanup:'+name+':'+(e as Error).message);}
    }
    report.cleanup.servicesStopped=(await Promise.all(Object.values(services).map(id=>docker.inspect(id)))).every(v=>!v.State.Running);
-  }
-  await connection?.close();await Promise.all([admin.end(),reader.end()]);
-  report.durationMs=Date.now()-startedAt;await writeJson(dir,'report.json',report);
+  }},async()=>{report.durationMs=Date.now()-startedAt;await writeJson(dir,'report.json',report);},e=>report.errors.push('finalize:'+(e as Error).message));
  }
  return report;
 }

@@ -63,7 +63,8 @@ export async function verifyCapture(dir:string):Promise<VerificationResult>{
   must(replay.incompatible?.expectedFailure===true&&replay.incompatible.errorType==='DeterminismViolationError','negative_replay_not_nondeterminism');
   for(const kind of ['original','compatible','incompatible'])must(replay.bundleHashes?.[kind]===sha256(await readFile(join(dir,'bundles/'+kind+'.js'))),'replay_bundle_mismatch:'+kind);
   must(report.workflowBundleHash===replay.bundleHashes.original,'original_bundle_mismatch');
-  const k=report.kill;must(k?.exitCode===137&&k.oomKilled===false&&k.beforeCompletion===true&&k.elapsedMs>=0&&k.elapsedMs<1000&&k.oldPid!==k.newPid&&k.oldStartedAt!==k.newStartedAt&&k.temporalIdBefore===k.temporalIdAfter,'worker_kill_boundary');
+  const k=report.kill;must(JSON.stringify(k)===JSON.stringify(await json(dir,'kill.json')),'kill_proof_mismatch');
+  must(k?.exitCode===137&&k.oomKilled===false&&k.beforeCompletion===true&&k.elapsedMs>=0&&k.elapsedMs<1000&&k.oldPid!==k.newPid&&k.oldStartedAt!==k.newStartedAt&&k.temporalIdBefore===k.temporalIdAfter,'worker_kill_boundary');
   return {pass:true,failures:[]};
  }catch(e){return {pass:false,failures:[(e as Error).message]};}
 }
