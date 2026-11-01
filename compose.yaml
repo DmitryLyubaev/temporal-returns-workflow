@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17.9-bookworm@sha256:3a69b9de644363f30110fbaa78b9e3298ce71bb1aa9124c0b0ceb0a2602c3283
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: p28_owner
+      POSTGRES_PASSWORD: ${P28_PASSWORD:?set P28_PASSWORD}
+      POSTGRES_DB: p28
+    ports: ["127.0.0.1:5488:5432"]
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U p28_owner -d p28"]
+      interval: 1s
+      timeout: 2s
+      retries: 30
+  tools:
+    image: node:24.22.2-bookworm-slim@sha256:a43f7fc3e52e87d12a905f46eea0275def84ca8f2981a5b53fed44d7fb398ee0
+    platform: linux/amd64
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgresql://p28_owner:${P28_PASSWORD}@postgres:5432/p28
+    volumes: [".:/app", "modules:/app/node_modules"]
+    mem_limit: 1536m
+    profiles: ["tools"]
+volumes:
+  postgres:
+  modules:

@@ -1,0 +1,7 @@
+.git
+.worktrees
+.superpowers
+.local
+node_modules
+build
+.env

@@ -1,0 +1,27 @@
+{
+  "name": "temporal-returns-workflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bounded local synthetic Temporal returns demonstration",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test --test-concurrency=1 build/tests/*.test.js"
+  },
+  "dependencies": {
+    "@temporalio/activity": "1.25.0",
+    "@temporalio/client": "1.25.0",
+    "@temporalio/common": "1.25.0",
+    "@temporalio/worker": "1.25.0",
+    "@temporalio/workflow": "1.25.0",
+    "long": "5.3.2",
+    "pg": "8.23.1",
+    "protobufjs": "8.7.1"
+  },
+  "devDependencies": {
+    "@temporalio/testing": "1.25.0",
+    "@types/node": "24.10.1",
+    "@types/pg": "8.23.1",
+    "typescript": "7.0.2"
+  },
+  "engines": {"node": ">=24.22.2 <25"}
+}
