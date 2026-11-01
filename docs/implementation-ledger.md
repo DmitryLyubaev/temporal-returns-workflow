@@ -113,3 +113,13 @@ tracked-history scan of94 blobs found no exactlocalcredential/privategeneratedpa
 or credentialpattern; personal author identity verified. This is targeted inspection,
 not a certification against arbitrary encoded secrets. Publication documentation
 is completed from actual outcomes, not anticipated results.
+
+First hosted run41352264720 on903beaa failed:43 software checks passed,11 could not
+start the ephemeral test server (EACCES); actual profile was skipped, owned cleanup
+passed. Raw log retained. Pinned upstream archive stores its binary as0644, hidden
+by executable Windows/WSL mount semantics locally. Isolated Linux extraction
+reproduced absent execute permission; chmod0755 allowed actual binary spawn.
+The first diagnostic tmpfs was too small (64MiB vs84MiB binary), and a second probe
+had tmpfs noexec; both raw outputs retained separately. Final128MiB exec tmpfs probe
+confirmed root cause and correction. CI setup now explicitly sets0755 only on the
+verified owned test-server binary. No test filtering, version change or retry tuning.
