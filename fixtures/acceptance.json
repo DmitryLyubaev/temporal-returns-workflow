@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "currency": "AUD",
+  "amountCents": 1000,
+  "cases": [
+    {"id":"A1","returnId":"R01","outcome":"refunded","reservation":"consumed","receiver":"committed","effect":true},
+    {"id":"A2","returnId":"R02","outcome":"expired","reservation":"open","receiver":null,"effect":false},
+    {"id":"A3","returnId":"R03","outcome":"refunded","reservation":"consumed","receiver":"committed","effect":true},
+    {"id":"A4","returnId":"R04","outcome":"cancelled","reservation":"released","receiver":null,"effect":false},
+    {"id":"A5","returnId":"R05","outcome":"cancelled","reservation":"released","receiver":null,"effect":false},
+    {"id":"A6","returnId":"R06","outcome":"refunded","reservation":"consumed","receiver":"committed","effect":true},
+    {"id":"A7","returnId":"R07","outcome":"failed_compensated","reservation":"released","receiver":"rejected","effect":false},
+    {"id":"A8","returnId":"R08","outcome":"refunded","reservation":"consumed","receiver":"committed","effect":true},
+    {"id":"A9","returnId":"R09","outcome":"uncertain","reservation":"held","receiver":"committed","effect":true},
+    {"id":"A10","returnId":"R10","outcome":"refunded","reservation":"consumed","receiver":"committed","effect":true},
+    {"id":"A11","returnId":"R11","outcome":"refunded","reservation":"consumed","receiver":"committed","effect":true}
+  ]
+}

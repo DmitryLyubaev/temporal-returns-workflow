@@ -131,12 +131,12 @@ and ReturnResult remain distinct in inspection/report output.
 Typed permanent errors expose stable codes and are translated to non-retryable
 Temporal failures in Task 2. Tables have capture/key/hash bindings and terminal fences.
 
-- [ ] Create the product repository only now, set personal Git identity, apply the worktree skill and create `codex/p28-local` in an isolated worktree. Copy the approved design/plan into product docs; do not modify another checkout.
-- [ ] Add the exact package/build setup and failing tests `reject_unsafe_identity`, `same_key_conflict`, `release_fences_late_reserve`, `consume_requires_committed_matching_receipt`. Include `assert.throws(() => parseReturn({...valid, amountCents: Number.MAX_SAFE_INTEGER + 1}))`, reject string amounts/slashes, and assert late reserve after release rejects while SQL remains `released`.
-- [ ] Run `npm run build` and `node --test build/tests/contracts.test.js build/tests/reservations.test.js` against an owned real PostgreSQL instance. Record expected missing implementation failures after dependencies resolve; imports/setup errors alone are not behavioral RED evidence.
-- [ ] Implement the exported signatures with parameterized SQL, unique keys, conditional state transitions and transaction-level conflict handling. Seed one `open` row per return. Use 1-second SQL statement and 500-ms lock timeouts; no DB transaction spans HTTP or fixture waits. Separate worker and receiver write roles.
-- [ ] Re-run focused tests. Concurrent reserve/release must serialize to a valid terminal state; mismatched input cannot mutate it. Repeated exact release/consume is harmless, conflicting consume/release fails. Verify worker role cannot write receiver effect tables.
-- [ ] Commit the task and record commands/results in `docs/implementation-ledger.md`.
+- [x] Create the product repository only now, set personal Git identity, apply the worktree skill and create `codex/p28-local` in an isolated worktree. Copy the approved design/plan into product docs; do not modify another checkout.
+- [x] Add the exact package/build setup and failing tests `reject_unsafe_identity`, `same_key_conflict`, `release_fences_late_reserve`, `consume_requires_committed_matching_receipt`. Include `assert.throws(() => parseReturn({...valid, amountCents: Number.MAX_SAFE_INTEGER + 1}))`, reject string amounts/slashes, and assert late reserve after release rejects while SQL remains `released`.
+- [x] Run `npm run build` and `node --test build/tests/contracts.test.js build/tests/reservations.test.js` against an owned real PostgreSQL instance. Record expected missing implementation failures after dependencies resolve; imports/setup errors alone are not behavioral RED evidence.
+- [x] Implement the exported signatures with parameterized SQL, unique keys, conditional state transitions and transaction-level conflict handling. Seed one `open` row per return. Use 1-second SQL statement and 500-ms lock timeouts; no DB transaction spans HTTP or fixture waits. Separate worker and receiver write roles.
+- [x] Re-run focused tests. Concurrent reserve/release must serialize to a valid terminal state; mismatched input cannot mutate it. Repeated exact release/consume is harmless, conflicting consume/release fails. Verify worker role cannot write receiver effect tables.
+- [x] Commit the task and record commands/results in `docs/implementation-ledger.md`.
 
 ## Task 2: owned receiver and bounded activities
 
@@ -153,17 +153,17 @@ Absence/unavailable lookup throws a retryable activity failure, so the configure
 three-attempt policy applies; it never returns proof of nonpayment. Dispatch transport failures are
 ambiguous. Export HTTP `startReceiver(config: ReceiverConfig): Promise<{close(): Promise<void>}>`.
 
-- [ ] Write `duplicate_post_one_effect`, `conflicting_post_no_extra_effect`, `lost_response_receipt_readback`, `reject_redirect`, `mismatched_receipt_not_success` and `permanent_failure_not_retryable`. Assert two exact POSTs return the same receipt ID and one SQL effect; malformed/mismatched key/hash never yields a confirmed refund. Use real HTTP and PostgreSQL, not mocked stores.
+- [x] Write `duplicate_post_one_effect`, `conflicting_post_no_extra_effect`, `lost_response_receipt_readback`, `reject_redirect`, `mismatched_receipt_not_success` and `permanent_failure_not_retryable`. Assert two exact POSTs return the same receipt ID and one SQL effect; malformed/mismatched key/hash never yields a confirmed refund. Use real HTTP and PostgreSQL, not mocked stores.
 
   Core assertions: `assert.equal(first.receiptId, second.receiptId)` and
   `assert.equal(snapshot.effects.length, 1)` for duplicate delivery;
   `assert.equal(conflict.status, 409)` without another effect for mismatched input.
 
-- [ ] Run `npm run build` then `node --test build/tests/receiver.test.js build/tests/activities.test.js`; retain meaningful failing assertions before implementation.
-- [ ] Implement `POST /refunds` and `GET /refunds/<encoded-key>` with a small body cap (8 KiB), schema checks, immutable outcome bindings and atomic effect/receipt writes. No-effect permanent rejection is durable. Faults select predeclared fixture rows, not arbitrary code or shell input; dropped responses happen after committed SQL.
-- [ ] Implement the typed activities with injected/configured pools and 2-second AbortSignal HTTP bound, `redirect: 'error'`, no resend loop. Track activity attempt numbers and actual requests separately. Add reserve fault injection for exactly two pre-commit transient failures. Fixture waits poll every 25 ms, heartbeat every 250 ms and end/cancel within 3 seconds; do not hold SQL locks during waits.
-- [ ] Re-run focused checks, including concurrent duplicates and rejection atomicity. Assert malformed JSON, oversized bodies, redirect responses, unavailable receipt lookup and DB failure cannot produce a supported success or compensation claim.
-- [ ] Commit and record verification. Leave server-side idempotency intact even with one scheduled dispatch attempt.
+- [x] Run `npm run build` then `node --test build/tests/receiver.test.js build/tests/activities.test.js`; retain meaningful failing assertions before implementation.
+- [x] Implement `POST /refunds` and `GET /refunds/<encoded-key>` with a small body cap (8 KiB), schema checks, immutable outcome bindings and atomic effect/receipt writes. No-effect permanent rejection is durable. Faults select predeclared fixture rows, not arbitrary code or shell input; dropped responses happen after committed SQL.
+- [x] Implement the typed activities with injected/configured pools and 2-second AbortSignal HTTP bound, `redirect: 'error'`, no resend loop. Track activity attempt numbers and actual requests separately. Add reserve fault injection for exactly two pre-commit transient failures. Fixture waits poll every 25 ms, heartbeat every 250 ms and end/cancel within 3 seconds; do not hold SQL locks during waits.
+- [x] Re-run focused checks, including concurrent duplicates and rejection atomicity. Assert malformed JSON, oversized bodies, redirect responses, unavailable receipt lookup and DB failure cannot produce a supported success or compensation claim.
+- [x] Commit and record verification. Leave server-side idempotency intact even with one scheduled dispatch attempt.
 
 ## Task 3: deterministic workflow, cancellation and replayable state
 
@@ -176,18 +176,18 @@ with Decision argument and query `returnState` returning the current business sn
 Worker registers only those activities on the capture-owned task queue. Bind retry
 values from Global Constraints explicitly, not SDK defaults.
 
-- [ ] Write serial time-skipping tests `first_valid_before_deadline_wins`, `deadline_rejects_late_signal`, `cancel_reserve_fenced`, `unknown_payment_keeps_reservation`, `cleanup_failure_not_cancelled`, `committed_finalize_failure_is_known_payment`. For uncertain, assert outcome `uncertain`, reservation `held`, dispatch calls 1 and release calls 0. Test exact/conflicting decisions and wrong reviewer.
+- [x] Write serial time-skipping tests `first_valid_before_deadline_wins`, `deadline_rejects_late_signal`, `cancel_reserve_fenced`, `unknown_payment_keeps_reservation`, `cleanup_failure_not_cancelled`, `committed_finalize_failure_is_known_payment`. For uncertain, assert outcome `uncertain`, reservation `held`, dispatch calls 1 and release calls 0. Test exact/conflicting decisions and wrong reviewer.
 
   Core assertions: `assert.equal(result.outcome, 'uncertain')`,
   `assert.equal(result.reservation, 'held')`, `assert.equal(dispatchCalls, 1)` and
   `assert.equal(releaseCalls, 0)` after lookup exhaustion. A decision processed at
   `startTimeMs + 10000` yields `assert.equal(result.outcome, 'expired')`.
 
-- [ ] Build/run `node --test --test-concurrency=1 build/tests/workflow.test.js build/tests/cancellation.test.js` with the pinned test-server executable. Record failing behavior, not only missing APIs.
-- [ ] Implement `returnsWorkflow` with a timer anchored to workflow start, signal validation/counters and no external I/O. Root cancellation before dispatch enters non-cancellable release; recheck cancellation before entering the payment scope. Once scheduled, dispatch/reconcile/finalize are shielded. Preserve cancellation-request observation even while shielding. Translate terminal bookkeeping errors accurately.
-- [ ] Add a real-development-server profile of `cancellation.test.ts` proving native `handle.cancel()` at pre/post-dispatch boundaries and actual one-attempt dispatch behavior after activity timeout. A cancelled or failed reservation must not later reopen a released row. This profile is a software integration check in a separate test capture, not canonical A1-A11 evidence.
-- [ ] Run the serial workflow tests and real-server cancellation profile. Check exact retry policy and separate Temporal execution status from business result. Verify ordinary workflow imports cannot pull in HTTP/DB modules.
-- [ ] Commit and record the test-server binary identity and test counts separately from actual-server checks.
+- [x] Build/run `node --test --test-concurrency=1 build/tests/workflow.test.js build/tests/cancellation.test.js` with the pinned test-server executable. Record failing behavior, not only missing APIs.
+- [x] Implement `returnsWorkflow` with a timer anchored to workflow start, signal validation/counters and no external I/O. Root cancellation before dispatch enters non-cancellable release; recheck cancellation before entering the payment scope. Once scheduled, dispatch/reconcile/finalize are shielded. Preserve cancellation-request observation even while shielding. Translate terminal bookkeeping errors accurately.
+- [x] Add a real-development-server profile of `cancellation.test.ts` proving native `handle.cancel()` at pre/post-dispatch boundaries and actual one-attempt dispatch behavior after activity timeout. A cancelled or failed reservation must not later reopen a released row. This profile is a software integration check in a separate test capture, not canonical A1-A11 evidence.
+- [x] Run the serial workflow tests and real-server cancellation profile. Check exact retry policy and separate Temporal execution status from business result. Verify ordinary workflow imports cannot pull in HTTP/DB modules.
+- [x] Commit and record the test-server binary identity and test counts separately from actual-server checks.
 
 ## Task 4: local CLI and reproducible isolated runtime
 
@@ -201,19 +201,19 @@ inspect/history. CLI JSON includes `submitted` versus business `accepted` explic
 `scripts/local.ps1 -Action setup|check|up|down|capture` owns container lifecycle actions;
 capture orchestration is completed in Task 5.
 
-- [ ] Write `closed_inspection_uses_result`, `closed_signal_not_claimed_accepted`, `workflow_id_reuse_rejected`, `preflight_refuses_busy_port`, `cleanup_does_not_touch_other_project`. Assert signalling acknowledgement is labelled submitted, not accepted, and closed inspection returns its stored ReturnResult even if querying is unavailable.
+- [x] Write `closed_inspection_uses_result`, `closed_signal_not_claimed_accepted`, `workflow_id_reuse_rejected`, `preflight_refuses_busy_port`, `cleanup_does_not_touch_other_project`. Assert signalling acknowledgement is labelled submitted, not accepted, and closed inspection returns its stored ReturnResult even if querying is unavailable.
 
   Core assertions: `assert.equal(inspection.result.outcome, 'refunded')` after
   query failure, and `assert.equal(signalReply.status, 'submitted')` with
   `assert.equal(signalReply.accepted, null)` for acknowledgement without observation.
 
-- [ ] Run focused tests RED. Use real closed/open Temporal handles for client behavior and fake process/port inventories for preflight policy; do not stop existing services to test refusal.
-- [ ] Implement the CLI, using Reject Duplicate workflow-ID policy and no workflow retry policy. Exact CLI inputs pass through contract validation; terminal history is exported as SDK-compatible JSON with workflow/run IDs and hashes.
-- [ ] Implement pinned Compose services `temporal`, `postgres`, `receiver`, `worker` and an on-demand tools container. Use ports 127.0.0.1:7288 gRPC, 8288 UI, 5488 PostgreSQL, 8388 receiver. Internal endpoints use service DNS. Development server command: `server start-dev --ip 0.0.0.0 --port 7233 --ui-port 8233 --db-filename /data/temporal.db --namespace p28`. Bind UI/HTTP listeners as needed for container routing while publishing host ports only on loopback.
-- [ ] Give only the capture tools container access to the local Docker socket for controlled worker kill/restart. Use the Docker HTTP API over that socket, with explicit project/label/container-ID checks before any mutation. Worker/receiver have no socket mount. The host wrapper starts the capture clock before `compose up`, passes the remaining budget into the runner and guarantees owned cleanup if the runner exits or times out. Do not assume a Docker CLI exists inside the Node image.
-- [ ] Add preflight: require >=6 GiB free host RAM and >=10 GiB free target disk; check Windows/WSL bindings, Docker responsiveness within 15 seconds and image identities. Do not start until prerequisites pass. Container memory limits: Temporal 1536 MiB, PostgreSQL 512 MiB, worker 768 MiB, receiver 256 MiB, tools/build 1536 MiB; serialize build/tests/runtime if needed. Use capture-specific Compose project `p28-<capture-id>`, database/volume names and task queue. Generate local-only demo credentials in ignored config; no shared account/security changes.
-- [ ] Run `./scripts/local.ps1 -Action setup` then `-Action check` from the product root. Setup verifies the test-server archive and freezes npm lockfile; later checks use `npm ci`. Canonical check builds, runs contract/DB/HTTP/CLI tests and serial time-skipping plus real-server profiles, returning nonzero for any failures or unexpected skips. Record versions and image/bundle hashes. `down` stops owned services without `-v`; prove unrelated resources survive.
-- [ ] Commit and record setup/import/build evidence. If pinned versions prove incompatible, record the failure and make the smallest verified compatible pin correction, preserving scope and its reason before proceeding.
+- [x] Run focused tests RED. Use real closed/open Temporal handles for client behavior and fake process/port inventories for preflight policy; do not stop existing services to test refusal.
+- [x] Implement the CLI, using Reject Duplicate workflow-ID policy and no workflow retry policy. Exact CLI inputs pass through contract validation; terminal history is exported as SDK-compatible JSON with workflow/run IDs and hashes.
+- [x] Implement pinned Compose services `temporal`, `postgres`, `receiver`, `worker` and an on-demand tools container. Use ports 127.0.0.1:7288 gRPC, 8288 UI, 5488 PostgreSQL, 8388 receiver. Internal endpoints use service DNS. Development server command: `server start-dev --ip 0.0.0.0 --port 7233 --ui-port 8233 --db-filename /data/temporal.db --namespace p28`. Bind UI/HTTP listeners as needed for container routing while publishing host ports only on loopback.
+- [x] Give only the capture tools container access to the local Docker socket for controlled worker kill/restart. Use the Docker HTTP API over that socket, with explicit project/label/container-ID checks before any mutation. Worker/receiver have no socket mount. The host wrapper starts the capture clock before `compose up`, passes the remaining budget into the runner and guarantees owned cleanup if the runner exits or times out. Do not assume a Docker CLI exists inside the Node image.
+- [x] Add preflight: require >=6 GiB free host RAM and >=10 GiB free target disk; check Windows/WSL bindings, Docker responsiveness within 15 seconds and image identities. Do not start until prerequisites pass. Container memory limits: Temporal 1536 MiB, PostgreSQL 512 MiB, worker 768 MiB, receiver 256 MiB, tools/build 1536 MiB; serialize build/tests/runtime if needed. Use capture-specific Compose project `p28-<capture-id>`, database/volume names and task queue. Generate local-only demo credentials in ignored config; no shared account/security changes.
+- [x] Run `./scripts/local.ps1 -Action setup` then `-Action check` from the product root. Setup verifies the test-server archive and freezes npm lockfile; later checks use `npm ci`. Canonical check builds, runs contract/DB/HTTP/CLI tests and serial time-skipping plus real-server profiles, returning nonzero for any failures or unexpected skips. Record versions and image/bundle hashes. `down` stops owned services without `-v`; prove unrelated resources survive.
+- [x] Commit and record setup/import/build evidence. If pinned versions prove incompatible, record the failure and make the smallest verified compatible pin correction, preserving scope and its reason before proceeding.
 
 ## Task 5: frozen acceptance harness, independent verifier and replay tooling
 
@@ -271,5 +271,4 @@ these six tasks share a small set of workflow/activity/evidence contracts; per-t
 agent/reviewer contexts would add overhead to this local demonstration. One fresh
 whole-branch review remains part of the plan.
 
-Status: design approved; plan self-reviewed and awaiting owner review/execution
-method. No implementation, dependency installation or application experiment has run.
+Status: design and Native execution approved. Tasks 1-4 verified; Task 5 capture/replay tooling is in progress. Canonical A1-A11, final review and local integration remain pending. Execution rulings are in docs/implementation-ledger.md.

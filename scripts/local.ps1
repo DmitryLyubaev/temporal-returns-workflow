@@ -1,6 +1,7 @@
 param(
     [ValidateSet('setup','check','up','down','capture')][string]$Action='check',
-    [ValidatePattern('^[a-z0-9_-]{1,48}$')][string]$CaptureId='dev'
+    [ValidatePattern('^[a-z0-9_-]{1,48}$')][string]$CaptureId='dev',
+    [switch]$Smoke
 )
 $ErrorActionPreference='Stop'
 $p28Root=Split-Path -Parent $PSScriptRoot
@@ -14,6 +15,7 @@ $p28Tag=$p28Sha.Substring(0,12)
 if(@(& git status --porcelain).Count -gt 0){$p28Sha='uncommitted-'+$p28Tag;$p28Tag='working-'+$p28Tag}
 $p28Deadline='0'
 $p28CaptureOverride=$false
+$p28CleaningUp=$false
 $p28Log=Join-Path $p28Root ('.local/driver-'+$Action+'-'+$CaptureId+'.log')
 
 function Invoke-P28Process([string[]]$Arguments,[int]$TimeoutMs=300000){
@@ -34,6 +36,11 @@ function Invoke-P28Process([string[]]$Arguments,[int]$TimeoutMs=300000){
     return $p28Out.TrimEnd()
 }
 function Invoke-P28Compose([string[]]$Command,[int]$TimeoutMs=300000){
+    if($p28CaptureOverride -and -not $p28CleaningUp -and $p28Deadline -ne '0'){
+        $p28Budget=[long]$p28Deadline-[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()-30000
+        if($p28Budget -le 0){throw 'capture budget exhausted; entering owned cleanup'}
+        $TimeoutMs=[int][Math]::Min($TimeoutMs,$p28Budget)
+    }
     $p28Args=@('-e','env',"P28_SOURCE_SHA=$p28Sha","P28_SOURCE_TAG=$p28Tag","P28_PROJECT=$p28Project","P28_CAPTURE_ID=$CaptureId","P28_TASK_QUEUE=$p28Project","P28_DEADLINE=$p28Deadline",'docker','compose','--project-name',$p28Project,'--project-directory',$p28RootWsl,'--env-file',"$p28RootWsl/.env",'--file',"$p28RootWsl/compose.yaml")
     if($p28CaptureOverride){$p28Args+=@('--file',"$p28RootWsl/compose.capture.yaml")}
     return Invoke-P28Process ($p28Args+$Command) $TimeoutMs
@@ -104,18 +111,38 @@ switch($Action){
     $p28Directory=Join-Path $p28Root ('.local/captures/'+$CaptureId)
     if(Test-Path -LiteralPath $p28Directory){throw 'capture already exists; original preserved'}
     New-Item -ItemType Directory -Path $p28Directory -Force | Out-Null
+    & git bundle create (Join-Path $p28Directory 'source.bundle') HEAD
+    if($LASTEXITCODE -ne 0){throw 'source bundle capture failed'}
+    [void](Invoke-P28Process @('-e','docker','image','inspect',('p28-app:'+$p28Tag),'--format','{{.Id}}') 15000)
     $p28Clock=[Diagnostics.Stopwatch]::StartNew();$p28Start=[DateTimeOffset]::UtcNow
     $p28Deadline=([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()+300000).ToString()
     $p28CaptureOverride=$true;$p28Failure=$null;$p28Clean=$false
     try{
         Start-P28Infrastructure
         [void](Invoke-P28Compose @('up','-d','receiver','worker'))
-        [void](Invoke-P28Compose @('run','--rm','tools','node','build/src/acceptance/run.js','--capture',$CaptureId) ([Math]::Max(1000,270000-$p28Clock.ElapsedMilliseconds)))
+        $p28Run=@('run','--rm','tools','node','build/src/acceptance/run.js','--capture',$CaptureId)
+        if($Smoke){$p28Run+='--smoke'}
+        [void](Invoke-P28Compose $p28Run ([Math]::Max(1000,270000-$p28Clock.ElapsedMilliseconds)))
     }catch{$p28Failure=$_.Exception.Message}
     finally{
-        try{[void](Invoke-P28Compose @('down','--timeout','3') 20000);$p28Clean=$true}catch{if(-not $p28Failure){$p28Failure='owned cleanup failed'}}
+        $p28CleaningUp=$true
+        try{
+            $p28Running=Invoke-P28Process @('-e','docker','ps','--quiet','--filter',('label=com.docker.compose.project='+$p28Project)) 5000
+            if($p28Running){
+                $p28Ids=@($p28Running -split '\s+')
+                foreach($p28Id in $p28Ids){
+                    if($p28Id -notmatch '^[a-f0-9]{12,64}$'){throw 'invalid owned cleanup ID'}
+                    $p28Owner=(Invoke-P28Process @('-e','docker','inspect','--format','{{index .Config.Labels "com.docker.compose.project"}}',$p28Id) 5000).Trim()
+                    if($p28Owner -ne $p28Project){throw 'cleanup ownership changed'}
+                }
+                [void](Invoke-P28Process (@('-e','docker','stop','--time','3')+$p28Ids) 10000)
+            }
+            [void](Invoke-P28Compose @('down','--timeout','3') 15000);$p28Clean=$true
+        }catch{if(-not $p28Failure){$p28Failure='owned cleanup failed'}}
         @{source=$p28Sha;captureId=$CaptureId;startedAt=$p28Start.ToString('o');finishedAt=[DateTimeOffset]::UtcNow.ToString('o');durationMs=$p28Clock.ElapsedMilliseconds;cleanup=$p28Clean;error=$p28Failure;withinDeadline=($p28Clock.ElapsedMilliseconds -le 300000)} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $p28Directory 'wrapper.json')
     }
+    & node scripts/finalize.cjs $p28Directory
+    if($LASTEXITCODE -ne 0){throw 'capture manifest finalization failed; original preserved'}
     if($p28Failure){throw $p28Failure}
     Write-Host ('capture finished in '+$p28Clock.ElapsedMilliseconds+'ms including cleanup')
  }
