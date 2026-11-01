@@ -115,7 +115,7 @@ smoke bundles are hash-archived. No old failed evidence was rewritten or relabel
 
 One sample per synthetic scenario, one worker interruption and three controlled replay
 bundles. There is no real payment, customer data, human approval study, LLM evaluation,
-cloud deployment, hosted CI, production authentication, HA, SLA, financial compliance
+cloud deployment, production authentication, HA, SLA, financial compliance
 or distributed exactly-once claim. Uncertain refunds have no operator resend/resolution
 feature. Reviewer identity is a local fixture.
 
@@ -128,7 +128,7 @@ profile in 18.526349351 seconds, zero failures/skips. The stricter read-only ver
 passed against original canonical01 and its archive. Workflow/fixture hashes are
 unchanged; no canonical rerun or second review occurred.
 
-One Minor is deferred: a committed finalization with lost acknowledgements can leave
+One Minor was initially deferred: a committed finalization with lost acknowledgements can leave
 `reconciliation_required` reporting a stale `held` reservation although SQL shows
 consumed. This can confuse investigation. See [review closeout](review-closeout.md).
 The owner selected local merge on 2 November 2026. Main fast-forwarded to `9f18cea`.
@@ -138,7 +138,7 @@ failures/skips. Both retained canonical copies passed the current read-only,
 network-disabled verifier. Workflow/fixture hashes remain identical; no measured
 runtime was repeated. Private evidence/credentials were relocated with verified
 hashes before owned worktree retirement. All owned services stopped; volumes,
-shared caches/images and unrelated resources are retained. Public publication is separate.
+shared caches/images and unrelated resources are retained. Public publication was later authorized; see the follow-up below.
 
 ## Identities
 
@@ -165,3 +165,22 @@ These are additional software/replay checks, not a new eleven-case runtime captu
 Original canonical01 bytes and its original source/hash identities above remain
 unchanged. One focused follow-up review found no findings. Publication and hosted
 run outcomes are recorded after actual execution.
+
+
+## Public repository and hosted verification, 2 November 2026
+
+Published [temporal-returns-workflow](https://github.com/DmitryLyubaev/temporal-returns-workflow)
+to the personal account after owner authorization and targeted tracked-history checks.
+The [first run](https://github.com/DmitryLyubaev/temporal-returns-workflow/actions/runs/41352264720)
+on903beaa passed43 software cases, with11 unable to launch the test server because
+its archive stores the binary as0644. The actual-server step was skipped; cleanup
+passed. No failed result was hidden or counted as passing. Isolated Linux extraction
+reproduced missing execute permission; chmod0755 allowed actual binary spawn.
+
+The [corrected hosted run](https://github.com/DmitryLyubaev/temporal-returns-workflow/actions/runs/41352521439)
+onc37f255 passed54 software checks and the separate five-case actual-server profile,
+zero failures/skips; owned cleanup passed. Framework timings were 30.461858266s
+and 16.983496559s respectively. Raw hosted logs/receipts are retained privately.
+The pinned test-server/image/software versions and original canonical evidence did
+not change. CI runs on GitHub-hosted Ubuntu with read-only repository permission;
+there is no public application service or cloud deployment.

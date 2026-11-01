@@ -123,3 +123,12 @@ The first diagnostic tmpfs was too small (64MiB vs84MiB binary), and a second pr
 had tmpfs noexec; both raw outputs retained separately. Final128MiB exec tmpfs probe
 confirmed root cause and correction. CI setup now explicitly sets0755 only on the
 verified owned test-server binary. No test filtering, version change or retry tuning.
+
+Hosted correctionc37f255 passed run41352521439:54 software cases in30.461858266s,
+actual-server5 in16.983496559s,zero failures/skips,cleanup success. Public repo
+DmitryLyubaev/temporal-returns-workflow confirmed PUBLIC/defaultmain; source history
+identity personal. Current verifier passes both original canonical copies and both
+immutable manifests/source bundle verify. Publication raw logs/receipts/replay and
+complete source preserved outside the publication worktree before normal Git
+retirement; original volumes/shared caches/images retained. Former minor resolved,
+no new deployment/operator feature and no remaining review findings.

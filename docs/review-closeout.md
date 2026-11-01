@@ -56,8 +56,8 @@ Synthetic payments provide no real-money or financial-compliance assurance.
 One worker interruption provides no HA, server/storage-loss, scaling or rolling
 upgrade assurance. Uncertain cases remain unresolved without an operator feature.
 Local hashes establish preservation and consistency, not external attestation
-against malicious fabrication. Local checks provide no hosted CI or deployment
-proof. Costs of these scope decisions are recorded in the implementation ledger.
+against malicious fabrication. The original local checks provided no hosted CI or deployment proof; the
+authorized follow-up now has successful hosted software checks, with no deployment. Costs of these scope decisions are recorded in the implementation ledger.
 
 ## Preservation and integration
 
@@ -79,3 +79,15 @@ hashes. New integration logs and source are preserved in a separate supplemental
 checkpoint before retirement of the merged owned worktree/branch. Owned services
 are stopped; volumes, shared images/caches and unrelated resources are retained.
 Public source and hosted CI were authorized by the owner on 2 November 2026; actual publication/run results are recorded separately. Cloud deployment remains outside scope.
+
+
+## Publication complete, 2 November 2026
+
+Public source is at https://github.com/DmitryLyubaev/temporal-returns-workflow.
+Hosted run41352521439 onc37f255 passed54 software checks plus five actual-server
+cases, zero failures/skips, with successful cleanup. Initial run41352264720 failed
+on missing archive execute permissions; the verified binary now receives0755 and
+the failed run remains retained. No reviewer finding remains deferred. No operator
+resolution feature or deployment was added. Supplemental local/hosted logs, replay
+report and complete source are preserved outside the publication worktree before
+its normal retirement. Original canonical captures remain unchanged.

@@ -23,8 +23,8 @@ Keep all existing evidence unchanged, and retain its original source identity. P
 
 - [x] Add a SHA-pinned checkout and hosted Ubuntu workflow running pinned dependency setup, software and actual-server profiles, with always-run owned cleanup.
 - [x] Inspect the small change and CI prerequisites, update source documentation and commit under the personal identity.
-- [ ] Merge locally, preserve supplemental logs/source and retire only the owned worktree after verification.
-- [ ] Create the personal public GitHub repository, push main, observe CI and correct actual failures if any.
-- [ ] Update tracker/handover with public URL and actual CI result. Public deployment is outside scope.
+- [x] Merge locally, preserve supplemental logs/source and retire only the owned worktree after verification.
+- [x] Create the personal public GitHub repository, push main, observe CI and correct actual failures if any.
+- [x] Update tracker/handover with public URL and actual CI result. Public deployment is outside scope.
 
 Self-review: every requested follow-up is covered; no new dependency, business case, runtime capture or deployment is introduced. Existing Native execution and the user's proceed instruction authorize this bounded follow-up without another design round.
